@@ -1,59 +1,119 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Tabs } from 'expo-router';
+import { View, StyleSheet, Platform } from 'react-native';
+import { COLORS, SHADOWS } from '@/constants/theme';
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
+  focused: boolean;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return (
+    <View style={[styles.iconWrap, props.focused && styles.iconWrapActive]}>
+      <FontAwesome size={20} name={props.name} color={props.color} />
+    </View>
+  );
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        tabBarActiveTintColor: COLORS.secondary,
+        tabBarInactiveTintColor: COLORS.textTertiary,
+        tabBarStyle: styles.tabBar,
+        tabBarLabelStyle: styles.tabLabel,
+        tabBarItemStyle: styles.tabItem,
+        headerStyle: styles.header,
+        headerTitleStyle: styles.headerTitle,
+        headerShadowVisible: false,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          title: 'Home',
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="home" color={color} focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="checkin"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Check-In',
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="plus-square" color={color} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="activity"
+        options={{
+          title: 'Activity',
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="heartbeat" color={color} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="journal"
+        options={{
+          title: 'Journal',
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="book" color={color} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="journey"
+        options={{
+          title: 'Journey',
+          headerShown: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name="bar-chart" color={color} focused={focused} />
+          ),
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 0,
+    height: Platform.OS === 'ios' ? 85 : 65,
+    paddingBottom: Platform.OS === 'ios' ? 25 : 8,
+    paddingTop: 8,
+    ...SHADOWS.md,
+  },
+  tabLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  tabItem: {
+    paddingTop: 4,
+  },
+  header: {
+    backgroundColor: COLORS.background,
+    elevation: 0,
+  },
+  headerTitle: {
+    color: COLORS.textPrimary,
+    fontWeight: '700',
+    fontSize: 18,
+  },
+  iconWrap: {
+    padding: 4,
+    borderRadius: 8,
+  },
+  iconWrapActive: {
+    backgroundColor: COLORS.secondarySoft,
+  },
+});
